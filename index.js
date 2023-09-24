@@ -163,5 +163,31 @@ app.post('/api/items', (req, res) => {
         });
 });
 
+// update api
+app.post("/api/update/:id",(req,res)=>{
 
+  let id = req.params.id *1;
+  let productToUpdate = ProductData.find (p=>q.id === id);
+  let index = ProductData. indexOf(productToUpdate);
+
+  ProductData [index] = req.body;
+})
+
+// delete api
+
+app.post("/api/delete/:id",(req,res)=>{
+
+  let id req.params.id *1;
+  let productToUpdate = ProductData.find (p=>q.id === id);
+  let index = ProductData. indexOf(productToUpdate);
+
+  ProductData.splice (index,1);
+
+  res.status (204).send (
+    {
+      'status' : 'success',
+      'message' : "product deleted"
+    }
+  );
+})
 
