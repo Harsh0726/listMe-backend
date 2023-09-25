@@ -132,6 +132,7 @@ connectToDb((err) => {
 //     }
 // });
 
+// suggestions
 app.get('/api/items', async (req, res) => {
     try {
         // const searchTerm = req.query.searchTerm || ''; // Get user input from query parameter
@@ -149,19 +150,19 @@ app.get('/api/items', async (req, res) => {
 
 
 // POST route for adding items
-app.post('/api/items', (req, res) => {
+// app.post('/api/items', (req, res) => {
 
-    const item = req.body;
+//     const item = req.body;
 
-    db.collection('items')
-        .insertOne(item)
-        .then(result => {
-            res.status(201).json(result);
-        })
-        .catch(err => {
-            res.status(500).json({ err: 'Could not create a new document' });
-        });
-});
+//     db.collection('items')
+//         .insertOne(item)
+//         .then(result => {
+//             res.status(201).json(result);
+//         })
+//         .catch(err => {
+//             res.status(500).json({ err: 'Could not create a new document' });
+//         });
+// });
 
 // update api
 app.post("/api/update/:id",(req,res)=>{
@@ -177,7 +178,7 @@ app.post("/api/update/:id",(req,res)=>{
 
 app.post("/api/delete/:id",(req,res)=>{
 
-  let id req.params.id *1;
+//   let id req.params.id *1;
   let productToUpdate = ProductData.find (p=>q.id === id);
   let index = ProductData. indexOf(productToUpdate);
 
