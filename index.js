@@ -168,21 +168,23 @@ app.get('/api/items', async (req, res) => {
 app.post("/api/update/:id",(req,res)=>{
 
   let id = req.params.id *1;
-  let productToUpdate = ProductData.find (p=>q.id === id);
-  let index = ProductData. indexOf(productToUpdate);
+  let productToUpdate = productList.find (p=>q.id === id);
+  let index = productList.indexOf(productToUpdate);
 
-  ProductData [index] = req.body;
+  productList[index] = req.body;
 })
 
 // delete api
 
 app.post("/api/delete/:id",(req,res)=>{
 
-//   let id req.params.id *1;
-  let productToUpdate = ProductData.find (p=>q.id === id);
-  let index = ProductData. indexOf(productToUpdate);
 
-  ProductData.splice (index,1);
+  let id = req.params.id * 1;
+  let productToUpdate = productList.find (p => p.id === id);
+  let index = productList.indexOf(productToUpdate);
+
+
+  productList.splice (index,1);
 
   res.status (204).send (
     {
@@ -191,4 +193,5 @@ app.post("/api/delete/:id",(req,res)=>{
     }
   );
 })
+
 
