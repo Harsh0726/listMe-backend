@@ -120,25 +120,15 @@ connectToDb((err) => {
     }
 });
 
-// app.get('/items', async (req, res) => {
-//     try {
-//         const db = getDb();
-//         const items = await db.collection('items').find().sort({ item_name: 1 }).toArray();
-//         console.log('Fetched items:', items); // Add this line for debugging
-//         res.status(200).json(items);
-//     } catch (error) {
-//         console.error('Error fetching documents:', error);
-//         res.status(500).json({ error: 'Could not fetch the documents' });
-//     }
-// });
-
 // suggestions
+
 app.get('/api/items', async (req, res) => {
     try {
-        // const searchTerm = req.query.searchTerm || ''; // Get user input from query parameter
+        const searchTerm = req.query.searchTerm || ''; // Get user input from query parameter
         const db = getDb();
+        // Use a regular expression to perform a case-insensitive search on the item_name field
         const items = await db.collection('items')
-            .find() 
+            .find({ item_name: { $regex: new RegExp(searchTerm, 'i') } })
             .sort({ item_name: 1 })
             .toArray();
         res.status(200).json(items);
@@ -147,6 +137,7 @@ app.get('/api/items', async (req, res) => {
         res.status(500).json({ error: 'Could not fetch the documents' });
     }
 });
+
 
 
 // POST route for adding items
