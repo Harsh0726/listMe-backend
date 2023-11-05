@@ -1,5 +1,5 @@
 const express = require("express");
-const {connectToDb, getDb} = require('./db');
+const { connectToDb, getDb } = require('./db');
 
 const app = express();
 
@@ -25,13 +25,13 @@ app.use((req, res, next) => {
 });
 
 // connect to the server
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("Connected to server at 3000");
 })
 
 // post api
 
-app.post("/api/add_product", (req, res)=>{
+app.post("/api/add_product", (req, res) => {
     console.log("Result", req.body);
 
     // const itemArray = req.body.items.map(item => {
@@ -44,7 +44,7 @@ app.post("/api/add_product", (req, res)=>{
     // })
 
     const pdata = {
-        "id": productList.length+1,
+        // "id": productList.length + 1,
         "lTitle": req.body.ltitle,
         "items": req.body.items
 
@@ -58,21 +58,26 @@ app.post("/api/add_product", (req, res)=>{
         "message": "Product added successfully",
         "product": pdata
     })
+
+    // Save pdata to the SavedLists collection
+    const savedListsCollection = getDb().collection('SavedLists');
+    savedListsCollection.insertOne(pdata)
+        
 })
 
 //post api for feedback
 app.post("/api/add_feedback", (req, res) => {
-  console.log("Request Body:", req.body);
+    console.log("Request Body:", req.body);
 
     const pdata = {
-        "id": feedbackData.length+1,
+        "id": feedbackData.length + 1,
         // "pfeedback": req.body.pfeedback,
-        
+
         "pfeedback": req.body.pfeedback
 
 
-       // "pfeedback": req.body.pdata,
-       
+        // "pfeedback": req.body.pdata,
+
     };
 
     feedbackData.push(pdata);
@@ -83,29 +88,43 @@ app.post("/api/add_feedback", (req, res) => {
         "message": "Feedback added successfully",
         "feedback": pdata
     });
-    
+
 
 })
 
 // get Api
 
-app.get("/api/get_product",(req,res)=> {
+// app.get("/api/get_product", (req, res) => {
 
 
-    if (productList.length > 0 ){
-        res.status(200).send({
-            'status_code':200,
-            'products': productList
-        });
-    } else {
-        res.status(200).send({
-            'status_code':200,
-            'products': []
+//     if (productList.length > 0) {
+//         res.status(200).send({
+//             'status_code': 200,
+//             'products': productList
+//         });
+//     } else {
+//         res.status(200).send({
+//             'status_code': 200,
+//             'products': []
 
-    })
+//         })
 
 
-}})
+//     }
+// })
+app.get("/api/get_product", async (req, res) => {
+    const savedListsCollection = getDb().collection('SavedLists');
+    try {
+      const products = await savedListsCollection.find({}).toArray();
+      res.status(200).json({
+        status_code: 200,
+        products: products,
+      });
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      res.status(500).json({ error: 'Could not fetch the products' });
+    }
+  });
 
 // check connect to the database
 connectToDb((err) => {
@@ -116,7 +135,7 @@ connectToDb((err) => {
 
         db = getDb();
 
-        
+
     }
 });
 
@@ -156,36 +175,71 @@ app.get('/api/items', async (req, res) => {
 // });
 
 // update api
-app.post("/api/update/:id",(req,res)=>{
+app.post("/api/update/:id", (req, res) => {
 
-  let id = req.params.id *1;
-  let productToUpdate = productList.find (p=>q.id === id);
-  let index = productList.indexOf(productToUpdate);
+    let id = req.params.id * 1;
+    let productToUpdate = productList.find(p => q.id === id);
+    let index = productList.indexOf(productToUpdate);
 
-  productList[index] = req.body;
+    productList[index] = req.body;
 })
 
-// delete api
+delete api
 
-app.post("/api/delete/:id",(req,res)=>{
-
-
-  let id = req.params.id*1;
-  let productToDelete = productList.find(p => p.id === id);
-  let index = productList.indexOf(productToDelete);
+app.post("/api/delete/:id", (req, res) => {
 
 
-  productList.splice(index,1);
+    let id = req.params.id * 1;
+    let productToDelete = productList.find(p => p.id === id);
+    let index = productList.indexOf(productToDelete);
 
-  res.status(200).send(
-    {
-      'status' : 'success',
-      'message' : "product deleted"
-    }
-  );
-console.log(res.data);
-  
-  
+
+    productList.splice(index, 1);
+
+    res.status(200).send(
+        {
+            'status': 'success',
+            'message': "product deleted"
+        }
+    );
+    console.log("Delete data",res.data);
+
+
 })
+
+// Delete API - Harsh
+// app.post("/api/delete/:id", async (req, res) => {
+//     const id = parseInt(req.params.id);
+
+//     // Get the SavedLists collection
+//     const savedListsCollection = getDb().collection('SavedLists');
+
+//     try {
+//         // Find and delete the document with the matching ID
+//         const result = await savedListsCollection.deleteOne({ id : id});
+
+//         if (result.deletedCount === 1) {
+//             // Document was deleted successfully
+//             res.status(200).send({
+//                 status: 'success',
+//                 message: 'Product deleted'
+//             });
+//         } else {
+//             // No matching document found
+//             res.status(404).send({
+//                 status: 'error',
+//                 message: 'Product not found'
+//             });
+//         }
+//     } catch (error) {
+//         console.error('Error deleting product:', error);
+//         res.status(500).send({
+//             status: 'error',
+//             message: 'Internal server error'
+//         });
+//     }
+//     console.log("Delete data",id);
+// });
+
 
 

@@ -16,5 +16,6 @@ module.exports = {
                 return cb(err)
             })
     },
-    getDb: () => dbConnection
+    getDb: () => dbConnection,
+    getSavedListsCollection: () => dbConnection.collection('SavedLists')
 }
