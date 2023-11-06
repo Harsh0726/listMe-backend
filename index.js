@@ -1,5 +1,14 @@
+
+
+const helmet = require("helmet");
+const morgan = require("morgan");
+const userRoute = require("./routes/users");
+const authRoute = require("./routes/auth");
+
+
 const express = require("express");
 const { connectToDb, getDb } = require('./db');
+
 
 const app = express();
 
@@ -9,6 +18,32 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+
+
+// mongoose.connect(process.env.MONGO_URL)
+//   .then(() => {
+//     console.log("Connected to MongoDB");
+//   })
+//   .catch((error) => {
+//     console.error("Error connecting to MongoDB:", error);
+//   });
+
+// mongoose.connection.on('error', (err) => {
+//   console.error('MongoDB connection error:', err);
+// });
+
+//middleware
+app.use(express.json());
+app.use(helmet());
+app.use(morgan("common"));
+
+app.use("/api/users", userRoute);
+app.use("/api/auth", authRoute);
+
+
+
+
+
 
 const productList = [];
 const feedbackData = [];
@@ -46,12 +81,13 @@ app.post("/api/add_product", (req, res) => {
     const pdata = {
         // "id": productList.length + 1,
         "lTitle": req.body.ltitle,
-        "items": req.body.items
+        "items": req.body.items,
+        "id": req.body.id
 
     };
 
-    productList.push(pdata);
-    console.log("Final", pdata);
+    // productList.push(pdata);
+    // console.log("Final", pdata);
 
     res.status(200).send({
         "status_code": 200,
@@ -184,17 +220,17 @@ app.post("/api/update/:id", (req, res) => {
     productList[index] = req.body;
 })
 
-delete api
+//delete api
 
 app.post("/api/delete/:id", (req, res) => {
 
 
-    let id = req.params.id * 1;
+    let pid = req.params.id;
     let productToDelete = productList.find(p => p.id === id);
     let index = productList.indexOf(productToDelete);
 
 
-    productList.splice(index, 1);
+   db.SavedLists.deleteOne({id:pid})
 
     res.status(200).send(
         {
@@ -240,6 +276,5 @@ app.post("/api/delete/:id", (req, res) => {
 //     }
 //     console.log("Delete data",id);
 // });
-
 
 
