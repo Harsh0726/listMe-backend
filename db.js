@@ -1,21 +1,22 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
+const dotenv = require("dotenv");
 
-let dbConnection
-let uri = 'mongodb+srv://harshani:listMe1234@shoppinglistcluster.m3cfxvy.mongodb.net/SuggestItems?retryWrites=true&w=majority'
+let dbConnection;
 
+dotenv.config();
 module.exports = {
-    connectToDb: (cb) => {
-        MongoClient.connect(uri)
-            .then((client) => {
-                dbConnection = client.db()
-                console.log('Connected to MongoDB successfully.');
-                return cb()
-            })
-            .catch(err => {
-                console.error('Error connecting to MongoDB:', err);
-                return cb(err)
-            })
-    },
-    getDb: () => dbConnection,
-    getSavedListsCollection: () => dbConnection.collection('SavedLists')
-}
+  connectToDb: (cb) => {
+    MongoClient.connect(process.env.MONGO_URL)
+      .then((client) => {
+        dbConnection = client.db();
+        console.log("Connected to MongoDB successfully.");
+        return cb();
+      })
+      .catch((err) => {
+        console.error("Error connecting to MongoDB:", err);
+        return cb(err);
+      });
+  },
+  getDb: () => dbConnection,
+  getSavedListsCollection: () => dbConnection.collection("SavedLists"),
+};
