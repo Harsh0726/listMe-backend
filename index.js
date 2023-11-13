@@ -179,6 +179,20 @@ app.get("/api/get_product", async (req, res) => {
   }
 });
 
+app.get("/api/get_checklist", async (req, res) => {
+  const savedListsCollection = getDb().collection("SavedCheckList");
+  try {
+    const products = await savedListsCollection.find({}).toArray();
+    res.status(200).json({
+      status_code: 200,
+      products: products,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ error: "Could not fetch the products" });
+  }
+});
+
 // check connect to the database
 connectToDb((err) => {
   if (err) {
