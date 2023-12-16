@@ -193,6 +193,27 @@ app.get("/api/get_checklist", async (req, res) => {
   }
 });
 
+app.get("/api/get_checklist_total", async (req, res) => {
+  const savedListsCollection = getDb().collection("SavedCheckList");
+  try {
+    const products = await savedListsCollection.find({}).toArray();
+
+    // Calculate sum of 'total' for each item in the list
+    let totalSum = 0;
+    products.forEach((item) => {
+      totalSum += item.total || 0; // Add 'total' to the sum (considering it might be undefined or null)
+    });
+    console.log(totalSum);
+    res.status(200).json({
+      status_code: 200,
+      totalSum: totalSum,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ error: "Could not fetch the products" });
+  }
+});
+
 // check connect to the database
 connectToDb((err) => {
   if (err) {
