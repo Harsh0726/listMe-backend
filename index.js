@@ -3,6 +3,9 @@ const morgan = require("morgan");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 
+//adminRoutes
+const adminRoutes = require("./routes/adminRoutes");
+
 const express = require("express");
 const { connectToDb, getDb } = require("./db");
 
@@ -33,6 +36,8 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
 
+//admin routes
+app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 
